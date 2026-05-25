@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users collection
+    match /users/{userId} {
+      // Users can read their own document
+      allow read: if request.auth.uid == userId;
+      
+      // Admin can read all users
+      allow read: if isAdmin();
+      
+      // Users can only write to their own document
+      allow write: if request.auth.uid == userId;
+      
+      // Admin can write to any user
+      allow write: if isAdmin();
+    }
+    
+    // Bets collection
+    match /bets/{betId} {
+      // Users can create bets
+      allow create: if request.auth != null;
+      
+      // Users can read their own bets
+      allow read: if request.auth.uid == resource.data.userId;
+      
+      // Admin can read all bets
+      allow read: if isAdmin();
+      
+      // Only admin can update/delete bets
+      allow update, delete: if isAdmin();
+    }
+    
+    // Results collection - visible to all authenticated users
+    match /results/{resultId} {
+      // All authenticated users can read results
+      allow read: if request.auth != null;
+      
+      // Only admin can write results
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Transactions collection
+    match /transactions/{transactionId} {
+      // Users can read their own transactions
+      allow read: if 
+        request.auth.uid == resource.data.from || 
+        request.auth.uid == resource.data.to;
+      
+      // Admin can read all transactions
+      allow read: if isAdmin();
+      
+      // Only admin can create transactions
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Masters collection
+    match /masters/{masterId} {
+      // Master can read their own data
+      allow read: if request.auth.uid == masterId;
+      
+      // Admin can read all masters
+      allow read: if isAdmin();
+      
+      // Only admin can write masters
+      allow write: if isAdmin();
+    }
+    
+    // Helper functions
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'admin';
+    }
+    
+    function isMaster() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'master' ||
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'master';
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isTransaction(fromId, toId) {
+      return request.auth.uid == fromId || request.auth.uid == toId;
+    }
+  }
+}
