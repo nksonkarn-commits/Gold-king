@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold King - Master Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #f5576c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #f5576c;
+            padding-bottom: 10px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #f5576c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #f093fb;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f5576c;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .data-table th {
+            background: #f5576c;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 12px;
+        }
+        
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧑‍💼 Gold King - Master Panel</h1>
+            <p style="color: #666; margin-top: 5px;">Manage users, tokens & transactions</p>
+        </header>
+        
+        <div id="alerts"></div>
+        
+        <div class="grid">
+            <div class="card">
+                <h2>➕ Create New User</h2>
+                
+                <div class="control-group">
+                    <label>User Email</label>
+                    <input type="email" id="userEmail" placeholder="user@example.com">
+                </div>
+                
+                <div class="control-group">
+                    <label>Password</label>
+                    <input type="password" id="userPassword" placeholder="Enter password">
+                </div>
+                
+                <div class="control-group">
+                    <label>Initial Balance</label>
+                    <input type="number" id="userBalance" value="5000" min="100">
+                </div>
+                
+                <div class="control-group">
+                    <label>User Type</label>
+                    <select id="userType">
+                        <option value="player">Player</option>
+                        <option value="agent">Agent</option>
+                    </select>
+                </div>
+                
+                <button onclick="createUser()">✅ Create User</button>
+                
+                <div class="stats-grid" style="margin-top: 15px;">
+                    <div class="stat-box">
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Active Today</div>
+                        <div class="stat-value" id="activeUsers">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>🔄 Token Transfer</h2>
+                
+                <div class="control-group">
+                    <label>From User</label>
+                    <select id="fromUser">
+                        <option value="">Select user...</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>To User</label>
+                    <select id="toUser">
+                        <option value="">Select user...</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Amount</label>
+                    <input type="number" id="transferAmount" min="1" placeholder="Enter amount">
+                </div>
+                
+                <div class="control-group">
+                    <label>Reason</label>
+                    <select id="transferReason">
+                        <option value="manual">Manual Transfer</option>
+                        <option value="bonus">Bonus</option>
+                        <option value="refund">Refund</option>
+                        <option value="withdrawal">Withdrawal</option>
+                    </select>
+                </div>
+                
+                <button onclick="transferTokens()">🚀 Transfer</button>
+            </div>
+            
+            <div class="card">
+                <h2>📊 Quick Stats</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Total Balance</div>
+                        <div class="stat-value" id="totalBalance">₹0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Today's Bets</div>
+                        <div class="stat-value" id="todayBets">₹0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Active Games</div>
+                        <div class="stat-value" id="activeGames">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Today's Payout</div>
+                        <div class="stat-value" id="todayPayout">₹0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card full-width">
+                <h2>👥 User List</h2>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Email</th>
+                            <th>Balance</th>
+                            <th>Type</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable">
+                        <tr><td colspan="7" style="text-align: center; color: #999;">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="card full-width">
+                <h2>💳 Transaction History</h2>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>User</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Balance After</th>
+                            <th>Reference</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTable">
+                        <tr><td colspan="7" style="text-align: center; color: #999;">No transactions yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, addDoc, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        window.createUser = async function() {
+            try {
+                const email = document.getElementById('userEmail').value;
+                const password = document.getElementById('userPassword').value;
+                const balance = parseInt(document.getElementById('userBalance').value);
+                const type = document.getElementById('userType').value;
+                
+                if (!email || !password) {
+                    showAlert('Please fill all fields', 'error');
+                    return;
+                }
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = userCredential.user.uid;
+                
+                await setDoc(doc(db, 'users', uid), {
+                    email: email,
+                    balance: balance,
+                    type: type,
+                    totalBets: 0,
+                    createdAt: new Date(),
+                    status: 'active'
+                });
+                
+                showAlert(`User created successfully! (Balance: ₹${balance})`, 'success');
+                document.getElementById('userEmail').value = '';
+                document.getElementById('userPassword').value = '';
+                loadUsers();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        }
+        
+        window.transferTokens = async function() {
+            try {
+                const fromUser = document.getElementById('fromUser').value;
+                const toUser = document.getElementById('toUser').value;
+                const amount = parseInt(document.getElementById('transferAmount').value);
+                const reason = document.getElementById('transferReason').value;
+                
+                if (!fromUser || !toUser || !amount) {
+                    showAlert('Please fill all fields', 'error');
+                    return;
+                }
+                
+                await addDoc(collection(db, 'transactions'), {
+                    from: fromUser,
+                    to: toUser,
+                    amount: amount,
+                    type: 'transfer',
+                    reason: reason,
+                    timestamp: new Date(),
+                    status: 'completed'
+                });
+                
+                showAlert(`₹${amount} transferred successfully!`, 'success');
+                document.getElementById('transferAmount').value = '';
+                loadTransactions();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadUsers() {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                const tbody = document.getElementById('usersTable');
+                const fromSelect = document.getElementById('fromUser');
+                const toSelect = document.getElementById('toUser');
+                
+                tbody.innerHTML = '';
+                fromSelect.innerHTML = '<option value="">Select user...</option>';
+                toSelect.innerHTML = '<option value="">Select user...</option>';
+                
+                querySnapshot.forEach((doc) => {
+                    const user = doc.data();
+                    const createdDate = user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${doc.id.substring(0, 8)}...</td>
+                            <td>${user.email}</td>
+                            <td>₹${user.balance || 0}</td>
+                            <td>${user.type || 'Player'}</td>
+                            <td>${createdDate}</td>
+                            <td><span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 3px; font-size: 11px;">Active</span></td>
+                            <td><button onclick="alert('User: ${user.email}')" style="padding: 5px 10px; font-size: 11px;">Details</button></td>
+                        </tr>
+                    `;
+                    
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = user.email;
+                    fromSelect.appendChild(option);
+                    
+                    const option2 = document.createElement('option');
+                    option2.value = doc.id;
+                    option2.textContent = user.email;
+                    toSelect.appendChild(option2);
+                });
+                
+                document.getElementById('totalUsers').textContent = querySnapshot.size;
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+        
+        window.loadTransactions = async function() {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'transactions'));
+                const tbody = document.getElementById('transactionsTable');
+                tbody.innerHTML = '';
+                
+                querySnapshot.forEach((doc) => {
+                    const trans = doc.data();
+                    const time = new Date(trans.timestamp.seconds * 1000).toLocaleString();
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${time}</td>
+                            <td>${trans.from || 'System'}</td>
+                            <td>${trans.type}</td>
+                            <td>₹${trans.amount}</td>
+                            <td>₹${trans.balanceAfter || '-'}</td>
+                            <td>${trans.reason || '-'}</td>
+                            <td><span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 3px; font-size: 11px;">Done</span></td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+            }
+        }
+        
+        function showAlert(message, type) {
+            const alertsDiv = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alertsDiv.appendChild(alert);
+            
+            setTimeout(() => alert.remove(), 4000);
+        }
+        
+        loadUsers();
+        window.loadTransactions();
+    </script>
+</body>
+</html>
